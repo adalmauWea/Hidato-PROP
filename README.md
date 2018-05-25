@@ -1,13 +1,14 @@
-# Hidato-PROP
---En Hidato estan las clases de domini!
---En imagenes y ventanas cosas que he ido haciendo para palpar como se hacen interficies graficas!
+# Hidato-PROPTO DO LIST
 
-Projecte sobre l'Hidato
+·generar automaticament (lo dels triangles) 
+·tema rankings-->BD,saber que volem fer  <- capa de persistencia
+·TEMA CLASSE MAIN: És el controlador i no pot tenir cap imprimir ni llegir per consola <- fer algo de capa de presentacio
 
-Main.java es para probar Partida.java(Tiempo.java) i Usuari.java
-
-Dentro de Partida.java hay parte de la classe Hidato.java que tuve que hacer para las fuciones de poner,quitar,etc.
-
-TO DO LIST:
-  -PARTIDA: 1) acabar funcion ajuda
-            2) Cuando este hecha Hidato.java cambiar todo lo relacionado con esta
+·TAULELL i HIDATO: sense cap imprimir
+·Resoldre no en partida, en hidato o una diferent
+·Polimorfisme en generarMatriu i llegir
+·generaMatriuAdj -> privada
+·poder jugar mes de 2 cop al mateix hidato <- aliasing entre hidatos
+·ajuda en partida
+·drivers taulell: creadora per consola malament, imprimir en taulell malament
+·RESOLDRE: possible millora: Adjacent mes proper al proper numero prefixat
