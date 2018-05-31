@@ -46,13 +46,28 @@ public class Hidato implements Serializable{
         else if (dificultat == 2){
             d = "Q,CA,4,4";
         }
-        else{
+        else if (dificultat == 3){
             d = "H,C,4,5";
+        }
+        else if (dificultat == 4){ 
+            d = "T,CA,5,5";
+        }
+        else if (dificultat == 5){ 
+            d = "T,C,4,5";
+        }
+         else if (dificultat == 6){ 
+            d = "T,C,5,4";
+        }
+          else if (dificultat == 7){
+            d = "T,C,4,4";
+        }
+        else {
+            d = "T,C,5,7";
         }
         Taulell t = new Taulell(d);
         this.taulell = t;
         this.mContingut = t.getmContingut();
-        generaMatAdj();
+      
         generaAutomaticament();
 
     }
@@ -63,42 +78,80 @@ public class Hidato implements Serializable{
     private void generaAutomaticament(){
         Random rand = new Random();
         boolean f = false;
-        Integer cx1 = 0;
+        Integer cx1 = 0; //inicialitzacions que no es fan ervir pero necessaries pk compili
         Integer cy1 = 0;
         Integer cx2 = 0;
         Integer cy2 = 0;
         while (!f) {
+            Integer numforats = 0;
+            if (taulell.getTcela().equals("T") && taulell.getTadjacencia().equals("C")){
+                
+                int TCf = taulell.getFiles();
+                int TCc = taulell.getColumnes();
+                if (TCf%2 == 1 && TCc%2 == 1){
+                    mContingut[TCf-1][0] = "#";
+                    mContingut[TCf-1][TCc-1] = "#";
+                    numforats = 2;
+                }
+                else if (TCf%2 == 1 && TCc%2 == 0){
+                    mContingut[0][TCc-1] = "#";
+                    mContingut[TCf-1][0] = "#"; 
+                    numforats = 2;
+                }
+                else if (TCf%2 == 0 && TCc%2 == 0){
+                    mContingut[0][TCc-1] = "#";
+                    mContingut[TCf-1][TCc-1] = "#";
+                    numforats = 2;
+                } 
+                // no s'ha de posar forats en el cas de f->0 c->0
+               
+            }
+            Integer ff = rand.nextInt((taulell.getFiles() * taulell.getColumnes())/5); //numero de forats que posarem
+            for (int i = 0; i < ff; i++){
+                Integer ff1 = rand.nextInt(taulell.getFiles());
+                Integer ff2 = rand.nextInt(taulell.getColumnes());
+                mContingut[ff1][ff2] = "#";
+            }
+            generaMatAdj();
             cx1 = rand.nextInt(taulell.getFiles());
             cy1 = rand.nextInt(taulell.getColumnes());
+            while (mContingut[cx1][cy1].equals("#")){
+                cx1 = rand.nextInt(taulell.getFiles());
+                cy1 = rand.nextInt(taulell.getColumnes());
+            }
             mContingut[cx1][cy1] = "1";
             cx2 = rand.nextInt(taulell.getFiles());
             cy2 = rand.nextInt(taulell.getColumnes());
-            while (cx1 == cx2 && cy1 == cy2) {
+            while ((mContingut[cx2][cy2].equals("#")) || (mContingut[cx2][cy2].equals("1"))) {
                 cx2 = rand.nextInt(taulell.getFiles());
                 cy2 = rand.nextInt(taulell.getColumnes());
             }
-
-            mContingut[cx2][cy2] = Integer.toString(taulell.getFiles() * taulell.getColumnes());
+            mContingut[cx2][cy2] = Integer.toString(taulell.getFiles() * taulell.getColumnes() - numforats);
+            
             f = resol();
-            if (!f){
-                mContingut[cx1][cy1] = "?";
-                mContingut[cx2][cy2] = "?";
+            if (!f){ // DESFER ELS CANVIS PER TORNAR A COMENÇAR
+                for (int i = 0; i < taulell.getFiles(); i++){
+                    for (int j = 0; j < taulell.getColumnes(); j++){
+                        mContingut[i][j]="?";
+                    }
+                }   
             }
         }
         ArrayList<Integer> posicions = new ArrayList<Integer>(); // x y n
         for (int i = 0; i < (taulell.getFiles() * taulell.getColumnes())/4; i++){
             Integer cx = rand.nextInt(taulell.getFiles());
             Integer cy = rand.nextInt(taulell.getColumnes());
-            posicions.add(cx);
-            posicions.add(cy);
-            posicions.add(Integer.parseInt(mContingut[cx][cy]));
+            if (!(mContingut[cx][cy]).equals("#")){
+                posicions.add(cx);
+                posicions.add(cy);
+                posicions.add(Integer.parseInt(mContingut[cx][cy]));
+            }
         }
         for (int i = 0; i < taulell.getFiles(); i++) {
             for (int j = 0; j < taulell.getColumnes(); j++) {
                 mContingut[i][j] = "?";
             }
         }
-
         mContingut[cx1][cy1] = "1";
         mContingut[cx2][cy2] = Integer.toString(taulell.getFiles() * taulell.getColumnes());
         for (int i = 0; i < posicions.size(); i = i + 3){
@@ -129,7 +182,7 @@ public class Hidato implements Serializable{
                     }
                 }
             }
-            if (taulell.getTadjacecnia().equals("CA")) {
+            if (taulell.getTadjacencia().equals("CA")) {
                 for (int i = 0; i < taulell.getFiles(); i++){
                     for (int j = 0; j < taulell.getColumnes(); j++){
                         if (taulell.getmContingut()[i][j] != "#" && taulell.getmContingut()[i][j] != "*"){
@@ -204,7 +257,7 @@ public class Hidato implements Serializable{
                     }
                 }
             }
-            if (taulell.getTadjacecnia().equals("CA")){
+            if (taulell.getTadjacencia().equals("CA")){
                 for (int i = 0; i < taulell.getFiles(); i++) {
                     for (int j = 0; j < taulell.getColumnes(); j++) {
                         if (taulell.getmContingut()[i][j] != "#" && taulell.getmContingut()[i][j] != "*") {
